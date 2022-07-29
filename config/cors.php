@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE',],
 
-    'allowed_origins' => ['https://dashboard-sinau.unjani.ac.id', 'http://dashboard-sinau.unjani.ac.id', 'https://dash-sinaureg.seculab.space', 'https://dash-sinau.seculab.space', 'http://dash-sinau.seculab.space', 'http://localhost:4200', 'https://dashboard-sinau.unjani.co.id', 'http://dashboard-sinau.unjani.co.id'],
+    'allowed_origins' => ['https://dashboard-sinau.unjani.ac.id', 'http://dashboard-sinau.unjani.ac.id', 'https://dash-sinaureg.seculab.space', 'https://dash-sinau.seculab.space', 'http://dash-sinau.seculab.space', 'http://localhost:4200', 'https://dashboard-sinau.unjani.co.id', 'http://dashboard-sinau.unjani.co.id', 'https://dash-sinaureg.celoe.org', 'http://dash-sinaureg.celoe.org'],
 
     'allowed_origins_patterns' => [],
 
