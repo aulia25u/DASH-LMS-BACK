@@ -30,6 +30,7 @@ Route::get('/getquiz/{course}', 'App\Http\Controllers\SchedulerController@getQui
 Route::get('/filtercategory', 'App\Http\Controllers\FilterController@filterCategory')->middleware('auth:api');
 Route::get('/filtercourse/{category}', 'App\Http\Controllers\FilterController@filterCourse')->middleware('auth:api');
 Route::get('/filterquiz/{course}', 'App\Http\Controllers\FilterController@filterQuiz')->middleware('auth:api');
+Route::get('/filtergroup/{course}', 'App\Http\Controllers\FilterController@filterGroup')->middleware('auth:api');
 //Filter End
 
 Route::get('/exam-analytic/{limit?}/{quiz?}', 'App\Http\Controllers\AnalyticController@chart')->middleware('auth:api');
