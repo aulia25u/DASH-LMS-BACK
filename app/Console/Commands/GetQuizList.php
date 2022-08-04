@@ -46,8 +46,8 @@ class GetQuizList extends Command
 
         foreach ($course as $crs => $val) 
         {
-            $response = Http::asForm()->post('https://sinau.seculab.space/webservice/rest/server.php', [
-                'wstoken' => '17ab8895ae58be423c98aa2beccc0adf',
+            $response = Http::asForm()->post('https://lms-demo.celoe.org/webservice/rest/server.php', [
+                'wstoken' => 'de282c89b7578af73ae88165d48b239b',
                 'wsfunction' => 'local_sinau_api_get_quiz_list',
                 'moodlewsrestformat' => 'json',
                 'course' => $val->course_id,
