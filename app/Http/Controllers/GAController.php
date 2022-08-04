@@ -150,8 +150,8 @@ class GAController extends Controller
     //User not participating
     public function MoodleNotParticipating($course, $group)
     {
-        $response = Http::asForm()->post(env('SINAU_DN'), [
-            'wstoken' => env('SINAU_TOKEN'),
+        $response = Http::asForm()->post(env('LMS_DN'), [
+            'wstoken' => env('LMS_TOKEN_SINAU'),
             'wsfunction' => 'local_sinau_api_get_users_not_participating',
             'moodlewsrestformat' => 'json',
             'course' => $course,
@@ -168,8 +168,8 @@ class GAController extends Controller
     //User participating
     public function MoodleAPIParticipating($quiz, $preview, $state)
     {
-        $response = Http::asForm()->post(env('SINAU_DN'), [
-            'wstoken' => env('SINAU_TOKEN'),
+        $response = Http::asForm()->post(env('LMS_DN'), [
+            'wstoken' => env('LMS_TOKEN_SINAU'),
             'wsfunction' => 'local_sinau_api_get_users_in_participating',
             'moodlewsrestformat' => 'json',
             'quiz_id' => $quiz,
@@ -194,8 +194,8 @@ class GAController extends Controller
     //User Enroll
     public function MoodleUserEnroll($course)
     {
-        $response = Http::asForm()->post(env('SINAU_DN'), [
-            'wstoken' => env('SINAU_TOKEN'),
+        $response = Http::asForm()->post(env('LMS_DN'), [
+            'wstoken' => env('LMS_TOKEN_SINAU'),
             'wsfunction' => 'local_sinau_api_get_number_participant',
             'moodlewsrestformat' => 'json',
             'course' => $course
@@ -216,8 +216,8 @@ class GAController extends Controller
             $group = 0;
         }
 
-        $response = Http::asForm()->post(env('SINAU_DN'), [
-            'wstoken' => env('SINAU_TOKEN'),
+        $response = Http::asForm()->post(env('LMS_DN'), [
+            'wstoken' => env('LMS_TOKEN_SINAU'),
             'wsfunction' => 'local_sinau_api_get_quiz_participant_statistic',
             'moodlewsrestformat' => 'json',
             'quiz_id' => $quiz,
@@ -249,8 +249,8 @@ class GAController extends Controller
     //User Active Moodle
     public function MoodleActiveUser($lastaccess)
     {
-        $response = Http::asForm()->post(env('SINAU_DN'), [
-            'wstoken' => env('SINAU_TOKEN'),
+        $response = Http::asForm()->post(env('LMS_DN'), [
+            'wstoken' => env('LMS_TOKEN_SINAU'),
             'wsfunction' => 'local_sinau_api_get_active_user_statistic',
             'moodlewsrestformat' => 'json',
             'mode' => 'total', //total = hanya count brp x akses, top = detail brp user access
@@ -268,8 +268,8 @@ class GAController extends Controller
     //User Grouped
     public function MoodleGroupedUser($course)
     {
-        $response = Http::asForm()->post(env('SINAU_DN'), [
-            'wstoken' => env('SINAU_TOKEN'),
+        $response = Http::asForm()->post(env('LMS_DN'), [
+            'wstoken' => env('LMS_TOKEN_SINAU'),
             'wsfunction' => 'local_sinau_api_get_number_participant',
             'moodlewsrestformat' => 'json',
             'course' => $course,
@@ -290,8 +290,8 @@ class GAController extends Controller
             $group = 0;
         }
 
-        $response = Http::asForm()->post(env('SINAU_DN'), [
-            'wstoken' => env('SINAU_TOKEN'),
+        $response = Http::asForm()->post(env('LMS_DN'), [
+            'wstoken' => env('LMS_TOKEN_SINAU'),
             'wsfunction' => 'local_sinau_api_get_exam_violator',
             'moodlewsrestformat' => 'json',
             'quiz_id' => $quiz,
