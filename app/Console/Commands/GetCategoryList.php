@@ -52,8 +52,8 @@ class GetCategoryList extends Command
         {
             $offset = $limit*$times;
 
-            $response = Http::asForm()->post('https://lms-demo.celoe.org/webservice/rest/server.php', [
-                'wstoken' => 'de282c89b7578af73ae88165d48b239b',
+            $response = Http::asForm()->post(env('LMS_DN'), [
+                'wstoken' => env('LMS_TOKEN_SINAU'),
                 'wsfunction' => 'local_sinau_api_get_category_list',
                 'moodlewsrestformat' => 'json',
                 'limit' => $limit,
@@ -70,6 +70,11 @@ class GetCategoryList extends Command
 
                 foreach ($data as $key => $value)
                 {
+                    if ($value['category_id'] == null || $value['category_id'] == '') 
+                    {
+                        $value['category_id'] = 0;
+                    }
+
                     $record = Category::updateOrCreate(
                                                             [
                                                                 'category_id' => $value['category_id'],
@@ -82,7 +87,7 @@ class GetCategoryList extends Command
                                                         );
                 }
 
-                if (count($data) > 100) 
+                if (count($data) > 99) 
                 {
                     Offset::where('item', 'category')->increment('offset');
                     $times++;

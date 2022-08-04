@@ -7,23 +7,23 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Command;
 
 use App\Models\Course;
-use App\Models\Quiz;
+use App\Models\Group;
 
-class GetQuizList extends Command
+class GetGroupList extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'sinau:getquiz';
+    protected $signature = 'sinau:getgroup';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Get Quiz List from SINAU';
+    protected $description = 'Get Group List from SINAU';
 
     /**
      * Create a new command instance.
@@ -48,7 +48,7 @@ class GetQuizList extends Command
         {
             $response = Http::asForm()->post(env('LMS_DN'), [
                 'wstoken' => env('LMS_TOKEN_SINAU'),
-                'wsfunction' => 'local_sinau_api_get_quiz_list',
+                'wsfunction' => 'local_sinau_api_get_group_list',
                 'moodlewsrestformat' => 'json',
                 'course' => $val->course_id,
             ]);
@@ -61,26 +61,29 @@ class GetQuizList extends Command
 
                 foreach ($data as $key => $value)
                 {
-                    $record = Quiz::updateOrCreate(
+                    if (!isset($value['group_section'])) 
+                    {
+                        $value['group_section'] = NULL;
+                    }
+                    else
+                    {
+                        $value['group_section'] = json_encode($value['group_section']);
+                    }
+
+                    $record = Group::updateOrCreate(
                                                         [
                                                             'course_id' => $val->course_id,
-                                                            'quiz_id' => $value['quiz_id'],
+                                                            'group_id' => $value['group_id'],
                                                         ],
                                                         [
-                                                            'quiz_name' => $value['quiz_name'],
-                                                            'timeopen' => $value['timeopen'],
-                                                            'timeclose' => $value['timeclose'],
-                                                            'timelimit' => $value['timelimit'],
-                                                            'attempts' => $value['attempts'],
-                                                            'number_questions' => $value['number_questions']
+                                                            'group_name' => $value['group_name'],
+                                                            'group_desc' => $value['group_desc'],
+                                                            'group_section' => $value['group_section'],
                                                         ]
                                                     );
                 }
             }
-            $this->info('Finish get quiz from course id: '.$val->course_id);
+            $this->info('Finish get group from course id: '.$val->course_id);
         }
-
-        // $this->info('Finish get quiz all');
-        // return true;
     }
 }

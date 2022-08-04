@@ -52,8 +52,8 @@ class GetCourseList extends Command
         {
             $offset = $limit*$times;
 
-            $response = Http::asForm()->post('https://lms-demo.celoe.org/webservice/rest/server.php', [
-                'wstoken' => 'de282c89b7578af73ae88165d48b239b',
+            $response = Http::asForm()->post(env('LMS_DN'), [
+                'wstoken' => env('LMS_TOKEN_SINAU'),
                 'wsfunction' => 'local_sinau_api_get_course_list',
                 'moodlewsrestformat' => 'json',
                 'limit' => $limit,
@@ -83,7 +83,7 @@ class GetCourseList extends Command
                     }
                 }
 
-                if (count($data) > 100) 
+                if (count($data) > 99) 
                 {
                     Offset::where('item', 'course')->increment('offset');
                     $times++;

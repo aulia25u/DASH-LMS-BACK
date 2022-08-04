@@ -12,6 +12,7 @@ use App\Models\Analytic;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\Quiz;
+use App\Models\Group;
 
 class FilterController extends Controller
 {
@@ -34,6 +35,16 @@ class FilterController extends Controller
 		$data = Quiz::select('quiz_id', 'quiz_name')
 					->where('course_id', $course)
 					->orderBy('quiz_id')
+					->get();
+
+		return $data;
+	}
+
+	public function filterGroup($course)
+	{
+		$data = Group::select('group_id', 'group_name')
+					->where('course_id', $course)
+					->orderBy('group_id')
 					->get();
 
 		return $data;

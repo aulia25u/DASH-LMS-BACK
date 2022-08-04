@@ -27,4 +27,30 @@ class UserController extends Controller
 
 		return $data;
 	}
+
+	public function getProfileMoodle($userid)
+	{
+		$response = Http::asForm()->post(env('SINAU_DN'), [
+            'wstoken' => env('SINAU_TOKEN'),
+            'wsfunction' => 'local_sinau_api_get_users_by_field',
+            'moodlewsrestformat' => 'json',
+            'field' => 'id',
+            'values[0]' => $userid,
+        ]);
+
+        $decode = json_decode($response, true);
+
+        if ($decode['exception'] == 'dml_missing_record_exception') 
+        {
+        	$ret = [];
+
+        	return $ret;
+        }
+        else
+        {
+			$ret = $decode['data'][0];
+
+			return $ret;
+        }
+	}
 }

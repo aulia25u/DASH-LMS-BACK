@@ -46,8 +46,8 @@ class GetQuestionBank extends Command
 
         foreach ($course as $crs => $val) 
         {
-            $response = Http::asForm()->post('https://lms-demo.celoe.org/webservice/rest/server.php', [
-                'wstoken' => 'de282c89b7578af73ae88165d48b239b',
+            $response = Http::asForm()->post(env('LMS_DN'), [
+                'wstoken' => env('LMS_TOKEN_SINAU'),
                 'wsfunction' => 'local_sinau_api_get_question_bank',
                 'moodlewsrestformat' => 'json',
                 'course' => $val->course_id,

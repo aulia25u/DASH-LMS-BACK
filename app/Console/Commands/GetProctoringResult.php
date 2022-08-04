@@ -48,12 +48,13 @@ class GetProctoringResult extends Command
             $condition = 0;
             $limit = 1000;
             $times = $courseDetail->proctoring_offset;
-            $offset = $limit*$times;
 
             while ($condition == 0) 
             {
-                $response = Http::asForm()->post('https://lms-demo.celoe.org/webservice/rest/server.php', [
-                    'wstoken' => 'de282c89b7578af73ae88165d48b239b',
+                $offset = $limit*$times;
+                
+                $response = Http::asForm()->post(env('LMS_DN'), [
+                    'wstoken' => env('LMS_TOKEN_SINAU'),
                     'wsfunction' => 'local_sinau_api_get_result_proctoring',
                     'moodlewsrestformat' => 'json',
                     'course' => $course,
@@ -93,7 +94,7 @@ class GetProctoringResult extends Command
                                                                 );
                     }
 
-                    if (count($data) > 1000) 
+                    if (count($data) > 999) 
                     {
                         Course::where('course_id', $course)->increment('proctoring_offset');
                         $times++;

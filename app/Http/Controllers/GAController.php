@@ -11,7 +11,7 @@ use Analytics;
 use Spatie\Analytics\Period;
 use Illuminate\Support\Carbon;
 
-
+use App\Models\Report;
 
 class GAController extends Controller
 {
@@ -145,5 +145,184 @@ class GAController extends Controller
         );
 
         return collect($analyticsData)->toArray();
+    }
+
+    //User not participating
+    public function MoodleNotParticipating($course, $group)
+    {
+        $response = Http::asForm()->post(env('SINAU_DN'), [
+            'wstoken' => env('SINAU_TOKEN'),
+            'wsfunction' => 'local_sinau_api_get_users_not_participating',
+            'moodlewsrestformat' => 'json',
+            'course' => $course,
+            'group' => $group
+        ]);
+
+        $decode = json_decode($response, true);
+
+        $res['total_user_not_participating'] = $decode['data']['total_user'];
+
+        return $res;
+    }
+
+    //User participating
+    public function MoodleAPIParticipating($quiz, $preview, $state)
+    {
+        $response = Http::asForm()->post(env('SINAU_DN'), [
+            'wstoken' => env('SINAU_TOKEN'),
+            'wsfunction' => 'local_sinau_api_get_users_in_participating',
+            'moodlewsrestformat' => 'json',
+            'quiz_id' => $quiz,
+            'preview' => $preview,
+            'state' => $state
+        ]);
+
+        return json_decode($response, true);
+    }
+
+    public function MoodleParticipating($quiz)
+    {
+        $inprogress = $this->MoodleAPIParticipating($quiz, 0, 'inprogress');
+        $finished = $this->MoodleAPIParticipating($quiz, 0, 'finished');
+
+        $res['total_user_inprogress'] = $inprogress['data']['total_user'];
+        $res['total_user_finished'] = $finished['data']['total_user'];
+
+        return $res;
+    }
+
+    //User Enroll
+    public function MoodleUserEnroll($course)
+    {
+        $response = Http::asForm()->post(env('SINAU_DN'), [
+            'wstoken' => env('SINAU_TOKEN'),
+            'wsfunction' => 'local_sinau_api_get_number_participant',
+            'moodlewsrestformat' => 'json',
+            'course' => $course
+        ]);
+
+        $decode = json_decode($response, true);
+
+        $res['total_user_enrolled'] = $decode['data']['total_user'];
+
+        return $res;
+    }
+
+    //Analytic per Quiz Attempt Statistic
+    public function MoodleQuizAttemptStatistic($quiz, $start, $end, $group=null)
+    {
+        if (is_null($group)) 
+        {
+            $group = 0;
+        }
+
+        $response = Http::asForm()->post(env('SINAU_DN'), [
+            'wstoken' => env('SINAU_TOKEN'),
+            'wsfunction' => 'local_sinau_api_get_quiz_participant_statistic',
+            'moodlewsrestformat' => 'json',
+            'quiz_id' => $quiz,
+            'timestart' => $start,
+            'timeend' => $end,
+            'group_id' => $group,
+        ]);
+
+        $decode = json_decode($response, true);
+
+        $res['total'] = $decode['data']['participants'];
+        $res['finish'] = $decode['data']['finished'];
+        $res['inprogress'] = $decode['data']['inprogress'];
+        $res['overdue'] = $decode['data']['overdue'];
+        $res['notattempt'] = $decode['data']['idle'];
+        $res['abandoned'] = $decode['data']['abandoned'];
+        $res['blocked'] = $decode['data']['blocked'];
+
+        Report::create([
+                            'quiz_id' => $quiz,
+                            'group_id' => $group,
+                            'interval' => $end,
+                            'detail' => json_encode($res),
+                       ]);
+
+        return $res;
+    }
+
+    //User Active Moodle
+    public function MoodleActiveUser($lastaccess)
+    {
+        $response = Http::asForm()->post(env('SINAU_DN'), [
+            'wstoken' => env('SINAU_TOKEN'),
+            'wsfunction' => 'local_sinau_api_get_active_user_statistic',
+            'moodlewsrestformat' => 'json',
+            'mode' => 'total', //total = hanya count brp x akses, top = detail brp user access
+            'lastaccess' => $lastaccess,
+            'limit' => 0,
+        ]);
+
+        $decode = json_decode($response, true);
+
+        $res['total_active_user'] = $decode['data']['total_user'];
+
+        return $res;
+    }
+
+    //User Grouped
+    public function MoodleGroupedUser($course)
+    {
+        $response = Http::asForm()->post(env('SINAU_DN'), [
+            'wstoken' => env('SINAU_TOKEN'),
+            'wsfunction' => 'local_sinau_api_get_number_participant',
+            'moodlewsrestformat' => 'json',
+            'course' => $course,
+        ]);
+
+        $decode = json_decode($response, true);
+
+        $res = $decode['data'];
+
+        return $res;
+    }
+
+    //Analytic Violation Realtime
+    public function MoodleRealtimeViolation($quiz, $start, $end, $group=null)
+    {
+        if (is_null($group)) 
+        {
+            $group = 0;
+        }
+
+        $response = Http::asForm()->post(env('SINAU_DN'), [
+            'wstoken' => env('SINAU_TOKEN'),
+            'wsfunction' => 'local_sinau_api_get_exam_violator',
+            'moodlewsrestformat' => 'json',
+            'quiz_id' => $quiz,
+            'timestart' => $start,
+            'timeend' => $end,
+            'group_id' => $group,
+        ]);
+
+        $decode = json_decode($response, true);
+
+        if ($decode['data']['list_user']) 
+        {
+            foreach ($decode['data']['list_user'] as $key => $value) 
+            {
+                $res[$key]['user'] = $value['firstname'].' '.$value['lastname'];
+                $res[$key]['email'] = $value['email'];
+                $res[$key]['attempt'] = $value['attempt_id'];
+
+                $evid = explode(',', $value['screnshots']);
+
+                foreach ($evid as $key2 => $value2) 
+                {
+                    $res[$key]['evidence'][$key2] = $value2;
+                }
+            }
+        }
+        else
+        {
+            $res = [];
+        }
+
+        return $res;
     }
 }

@@ -26,8 +26,8 @@ class SchedulerController extends Controller
 			$limit = 1000;
 			$offset = $limit*$times;
 
-			$response = Http::asForm()->post('https://dev-sinau.seculab.space/webservice/rest/server.php', [
-			    'wstoken' => 'be373eee0709f96f750b89a0b7119bf6',
+			$response = Http::asForm()->post(env('SINAU_DN'), [
+			    'wstoken' => env('SINAU_TOKEN'),
 				'wsfunction' => 'local_sinau_api_get_exam_attempts',
 				'moodlewsrestformat' => 'json',
 				'courseid' => $course,
@@ -117,8 +117,8 @@ class SchedulerController extends Controller
 			$limit = 1000;
 			$offset = $limit*$times;
 
-			$response = Http::asForm()->post('https://dev-sinau.seculab.space/webservice/rest/server.php', [
-			    'wstoken' => 'be373eee0709f96f750b89a0b7119bf6',
+			$response = Http::asForm()->post(env('SINAU_DN'), [
+			    'wstoken' => env('SINAU_TOKEN'),
 				'wsfunction' => 'local_sinau_api_get_category_list',
 				'moodlewsrestformat' => 'json',
 				'limit' => $limit,
@@ -168,8 +168,8 @@ class SchedulerController extends Controller
 			$limit = 1000;
 			$offset = $limit*$times;
 
-			$response = Http::asForm()->post('https://dev-sinau.seculab.space/webservice/rest/server.php', [
-			    'wstoken' => 'be373eee0709f96f750b89a0b7119bf6',
+			$response = Http::asForm()->post(env('SINAU_DN'), [
+			    'wstoken' => env('SINAU_TOKEN'),
 				'wsfunction' => 'local_sinau_api_get_course_list',
 				'moodlewsrestformat' => 'json',
 				'limit' => $limit,
@@ -212,8 +212,8 @@ class SchedulerController extends Controller
 	//Start Get Quiz
 	public function getQuiz($course)
 	{
-		$response = Http::asForm()->post('https://dev-sinau.seculab.space/webservice/rest/server.php', [
-		    'wstoken' => 'be373eee0709f96f750b89a0b7119bf6',
+		$response = Http::asForm()->post(env('SINAU_DN'), [
+		    'wstoken' => env('SINAU_TOKEN'),
 			'wsfunction' => 'local_sinau_api_get_quiz_list',
 			'moodlewsrestformat' => 'json',
 			'course' => $course,
@@ -251,11 +251,4 @@ class SchedulerController extends Controller
 		return 'done';
 	}
 	//End Get Quiz
-
-	public function test()
-	{
-		$data = DB::connection('oracle')->table('ACADEMIC.COURSEVIEW')->get();
-
-		return $data;
-	}
 }
