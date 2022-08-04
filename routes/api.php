@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 
+use App\Models\Quiz;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -63,9 +65,17 @@ Route::get('/proctoring-result-detail/{userid}', 'App\Http\Controllers\Proctorin
 
 Route::get('/analyze-proctoring/{quiz}', function ($quiz)
 {
-    $return = Artisan::call('sinau:analyzeproctoring', ['quiz' => $quiz]);
+    $quiz = Quiz::select('timeclose')->where('quiz_id', $quiz)->first();
 
-    return true;
+    if (now()->timestamp > $quiz->timeclose) 
+    {
+        $return = Artisan::call('sinau:analyzeproctoring', ['quiz' => $quiz]);
+        return true;
+    }
+    else
+    {
+        return response()->json(['status' => 'Failed', 'message' => 'Gagal melakukan analisis, Quiz masih berjalan'], 500);
+    }
 })->middleware('auth:api');
 Route::get('/gasinau', 'App\Http\Controllers\GAController@GATest')->middleware('auth:api');
 Route::get('/gasinauactiveuser', 'App\Http\Controllers\GAController@GATotalActiveUser')->middleware('auth:api');
@@ -76,6 +86,24 @@ Route::get('/gasinaupageviewLocation', 'App\Http\Controllers\GAController@GATest
 Route::get('/gasinaupageviewLocationcity', 'App\Http\Controllers\GAController@GATestPageViewLocationCity')->middleware('auth:api');
 Route::get('/gasinaupageviewos', 'App\Http\Controllers\GAController@GATestPageViewOS')->middleware('auth:api');
 Route::get('/gasinaupageviewdevicecategorychart', 'App\Http\Controllers\GAController@GATestPageViewDeviceCategoryChart')->middleware('auth:api');
+
+//Moodle Analytic
+Route::get('/moodlenotparticipating/{course}/{group}', 'App\Http\Controllers\GAController@MoodleNotParticipating')->middleware('auth:api');
+Route::get('/moodleparticipating/{quiz}', 'App\Http\Controllers\GAController@MoodleParticipating')->middleware('auth:api');
+Route::get('/moodleuserenroll/{course}', 'App\Http\Controllers\GAController@MoodleUserEnroll')->middleware('auth:api');
+
+Route::get('/moodlequizattemptstatistic/{quiz}/{start}/{end}/{group?}', 'App\Http\Controllers\GAController@MoodleQuizAttemptStatistic')->middleware('auth:api');
+
+Route::get('/moodleactiveuser/{lastaccess}', 'App\Http\Controllers\GAController@MoodleActiveUser')->middleware('auth:api');
+
+Route::get('/moodlegroupeduser/{course}', 'App\Http\Controllers\GAController@MoodleGroupedUser')->middleware('auth:api');
+
+Route::get('/moodlerealtimeviolation/{quiz}/{start}/{end}/{group?}', 'App\Http\Controllers\GAController@MoodleRealtimeViolation')->middleware('auth:api');
+
+Route::get('/getprofilemoodle/{userid}', 'App\Http\Controllers\UserController@getProfileMoodle')->middleware('auth:api');
+
+Route::get('/reportmonitoringinterval/{quiz}/{group?}', 'App\Http\Controllers\ReportController@ReportMonitoringInterval')->middleware('auth:api');
+Route::get('/reportmonitoringdetail/{quiz}/{group?}', 'App\Http\Controllers\ReportController@ReportMonitoringDetail')->middleware('auth:api');
 
 //Category
 Route::get('/syncmasterdata/category', 'App\Http\Controllers\SyncMasterData\SyncCategoryController@SyncCategory');
